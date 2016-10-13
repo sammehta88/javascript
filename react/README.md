@@ -26,26 +26,18 @@
   - Always use JSX syntax.
   - Do not use `React.createElement` unless you're initializing the app from a file that is not JSX.
 
-## Class vs `React.createClass` vs stateless
+## `React.createClass` vs stateless
 
-  - If you have internal state and/or refs, prefer `class extends React.Component` over `React.createClass` unless you have a very good reason to use mixins. eslint: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) [`react/prefer-stateless-function`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md)
+  - [`react/prefer-stateless-function`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md)
 
     ```jsx
-    // bad
+    // good
     const Listing = React.createClass({
       // ...
       render() {
         return <div>{this.state.hello}</div>;
       }
     });
-
-    // good
-    class Listing extends React.Component {
-      // ...
-      render() {
-        return <div>{this.state.hello}</div>;
-      }
-    }
     ```
 
     And if you don't have state or refs, prefer normal functions (not arrow functions) over classes:
@@ -57,6 +49,14 @@
         return <div>{this.props.hello}</div>;
       }
     }
+    
+    // bad
+    const Listing = React.createClass({
+      // ...
+      render() {
+        return <div>{this.props.hello}</div>;
+      }
+    });
 
     // bad (relying on function name inference is discouraged)
     const Listing = ({ hello }) => (
@@ -89,7 +89,7 @@
     const reservationItem = <ReservationCard />;
     ```
 
-  - **Component Naming**: Use the filename as the component name. For example, `ReservationCard.jsx` should have a reference name of `ReservationCard`. However, for root components of a directory, use `index.jsx` as the filename and use the directory name as the component name:
+  - **Component Naming**: Use Pascal Case of filenmae as the component name. For example, `reservation-card.jsx` should have a reference name of `ReservationCard`. However, for root components of a directory, use `index.jsx` as the filename and use the directory name as the component name:
 
     ```jsx
     // bad
@@ -100,32 +100,6 @@
 
     // good
     import Footer from './Footer';
-    ```
-  - **Higher-order Component Naming**: Use a composite of the higher-order component's name and the passed-in component's name as the `displayName` on the generated component. For example, the higher-order component `withFoo()`, when passed a component `Bar` should produce a component with a `displayName` of `withFoo(Bar)`.
-
-  > Why? A component's `displayName` may be used by developer tools or in error messages, and having a value that clearly expresses this relationship helps people understand what is happening.
-
-    ```jsx
-    // bad
-    export default function withFoo(WrappedComponent) {
-      return function WithFoo(props) {
-        return <WrappedComponent {...props} foo />;
-      }
-    }
-
-    // good
-    export default function withFoo(WrappedComponent) {
-      function WithFoo(props) {
-        return <WrappedComponent {...props} foo />;
-      }
-
-      const wrappedComponentName = WrappedComponent.displayName
-        || WrappedComponent.name
-        || 'Component';
-
-      WithFoo.displayName = `withFoo(${wrappedComponentName})`;
-      return WithFoo;
-    }
     ```
 
   - **Props Naming**: Avoid using DOM component prop names for different purposes.
